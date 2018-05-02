@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="zeroHeight">0.0dp</dimen>
+    <dimen name="navigationBarHeight">44.0dp</dimen>
+    <dimen name="statueBarHeight">20.0dp</dimen>
+    <dimen name="navigationBarHeight_statueBarHeight">64.0dp</dimen>
+    <dimen name="tabBarHeight">49.0dp</dimen>
+    <dimen name="lineHeight">0.5dp</dimen>
+    <dimen name="actionHeight">30.0dp</dimen>
+</resources>
