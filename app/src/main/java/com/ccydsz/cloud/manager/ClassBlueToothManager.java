@@ -99,21 +99,43 @@ public class ClassBlueToothManager {
             }
         }
     };
+    private BroadcastReceiver mStateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            Logger.i(String.format("连接状态: %s",action));
+            if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
+                RxBusManager.getInstance().send(RxBusManager.DeviceConnectionStatue, action);
+            } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
+                RxBusManager.getInstance().send(RxBusManager.DeviceConnectionStatue, action);
+            }
+
+        }
+    };
 
     public void search(){
-// Register the BroadcastReceiver
+        // Register the BroadcastReceiver
+        if (mReceiver.getResultCode() != 0){
+            mContext.unregisterReceiver(mReceiver);
+        }
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         mContext.registerReceiver(mReceiver, filter);
-
-//        Intent discoverableIntent = new
-//                Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-//        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
-//        mContext.startActivity(discoverableIntent);
+        mBluetoothAdapter.cancelDiscovery();
         mBluetoothAdapter.startDiscovery();
 
     }
 
     public void connect(BluetoothDevice device){
+        if (mStateReceiver.getResultCode() != 0){
+            mContext.unregisterReceiver(mStateReceiver);
+        }
+
+        IntentFilter filter1 = new IntentFilter(BluetoothDevice.ACTION_ACL_CONNECTED);
+        IntentFilter filter3 = new IntentFilter(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        IntentFilter filter2 = new IntentFilter(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED);
+        mContext.registerReceiver(mStateReceiver, filter1);
+        mContext.registerReceiver(mStateReceiver, filter3);
+        mContext.registerReceiver(mStateReceiver, filter2);
         ConnectThread connect = new ConnectThread(device);
         connect.start();
     }
