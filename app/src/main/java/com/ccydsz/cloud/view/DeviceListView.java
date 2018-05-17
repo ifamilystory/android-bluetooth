@@ -8,6 +8,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.ccydsz.cloud.R;
+import com.ccydsz.cloud.adapter.ClassDeviceListAdapter;
 import com.ccydsz.cloud.adapter.DeviceListAdapter;
 
 import butterknife.BindView;
@@ -35,6 +36,18 @@ public class DeviceListView extends ConstraintLayout implements AdapterView.OnIt
 
 
     private DeviceListAdapter listAdapter;
+
+    public ClassDeviceListAdapter getClassListAdapter() {
+        return classListAdapter;
+    }
+
+    public void setClassListAdapter(ClassDeviceListAdapter classListAdapter) {
+        this.classListAdapter = classListAdapter;
+        listView.setAdapter(this.classListAdapter);
+        listView.setOnItemClickListener(this);
+    }
+
+    private ClassDeviceListAdapter classListAdapter;
     public DeviceListView(Context context) {
         super(context);
         LayoutInflater.from(context).inflate(R.layout.device_listview, this);

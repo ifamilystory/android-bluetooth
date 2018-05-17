@@ -31,6 +31,34 @@ public class ZLUtil {
         return stringBuilder.toString();
     }
 
+    public static String byteToHexString(byte src){
+        StringBuilder stringBuilder = new StringBuilder("");
+        int v = src & 0xFF;
+        String hv = Integer.toHexString(v);
+        if (hv.length() < 2) {
+            stringBuilder.append(0);
+        }
+        stringBuilder.append(hv);
+        return stringBuilder.toString();
+    }
+
+
+    public static int byte2ToUnsignedShort(byte src) {
+        return (src & 0xFF);
+    }
+    public static int twoBytes2ToUnsignedShort(byte[] src) {
+        int high = src[0];
+        int low = src[1];
+        return (high << 8 & 0xFF00) | (low & 0xFF);
+    }
+
+    public static int fourBytes2Int(byte[] bytes) {
+        int b0 = bytes[0] & 0xFF;
+        int b1 = bytes[1] & 0xFF;
+        int b2 = bytes[2] & 0xFF;
+        int b3 = bytes[3] & 0xFF;
+        return (b0 << 24) | (b1 << 16) | (b2 << 8) | b3;
+    }
 
     /*
      * 字符转换为字节

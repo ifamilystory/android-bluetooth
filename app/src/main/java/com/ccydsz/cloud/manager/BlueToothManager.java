@@ -31,6 +31,11 @@ import static com.inuker.bluetooth.library.Constants.STATUS_DISCONNECTED;
  */
 
 public class BlueToothManager {
+
+    public enum BlueToothType {
+        BLE,CLASS
+    }
+
     public static String serverUUID = "FFE0";
     public static String characteristicUUID = "FFE1";
     public static Integer MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION = 9;
@@ -169,8 +174,7 @@ public class BlueToothManager {
 
                 BlueToothManager.getInstance().bluetoothClient.connect(device.getAddress(), options, new BleConnectResponse() {
                     @Override
-                    public void onResponse(int code, BleGattProfile data) {
-                        Logger.i(String.format("蓝牙连接: ---------------------------%s",String.valueOf(code)));
+                    public void onResponse(int code, BleGattProfile data) {Logger.i(String.format("蓝牙连接: ---------------------------%s",String.valueOf(code)));
                         if (code == REQUEST_SUCCESS) {
                             for (BleGattService service : data.getServices()) {
                                 if (service.getUUID().toString().toUpperCase().contains(serverUUID)) {

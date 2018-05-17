@@ -1,6 +1,8 @@
 package com.ccydsz.cloud.activity;
 
 import android.Manifest;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothManager;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -15,9 +17,11 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
 import com.ccydsz.cloud.R;
+import com.ccydsz.cloud.adapter.ClassDeviceListAdapter;
 import com.ccydsz.cloud.adapter.DeviceListAdapter;
 import com.ccydsz.cloud.base.BaseActivity;
 import com.ccydsz.cloud.manager.BlueToothManager;
+import com.ccydsz.cloud.manager.ClassBlueToothManager;
 import com.ccydsz.cloud.manager.RxBusManager;
 import com.ccydsz.cloud.util.ZLUtil;
 import com.ccydsz.cloud.view.DeviceListView;
@@ -32,6 +36,7 @@ import butterknife.ButterKnife;
 import io.reactivex.functions.Consumer;
 
 import static com.ccydsz.cloud.manager.RxBusManager.DeviceData;
+import static com.ccydsz.cloud.manager.RxBusManager.SearchClassDevice;
 import static com.ccydsz.cloud.manager.RxBusManager.SearchDevice;
 
 /**
@@ -41,10 +46,13 @@ import static com.ccydsz.cloud.manager.RxBusManager.SearchDevice;
 public class HomeActivity extends BaseActivity {
     DeviceListView mBlueToothListView;
     SearchResult mSelectedDevice;
+    BluetoothDevice mSelectedClassDevice;
     @BindView(R.id.bluetooth_view)
     public RelativeLayout blueToothSuperView;
     @BindView(R.id.bluetooth)
     public ImageButton bluetoothButton;
+
+    static BlueToothManager.BlueToothType type = BlueToothManager.BlueToothType.CLASS;
 
     @BindView(R.id.view)
     public ConstraintLayout view;
@@ -56,6 +64,13 @@ public class HomeActivity extends BaseActivity {
             public void accept(SearchResult searchResult) throws Exception {
                 mBlueToothListView.getListAdapter().addDevice(searchResult);
                 mBlueToothListView.getListAdapter().notifyDataSetChanged();
+            }
+        });
+        RxBusManager.getInstance().tObservable(SearchClassDevice,BluetoothDevice.class).subscribe(new Consumer<BluetoothDevice>() {
+            @Override
+            public void accept(BluetoothDevice searchResult) throws Exception {
+                mBlueToothListView.getClassListAdapter().addDevice(searchResult);
+                mBlueToothListView.getClassListAdapter().notifyDataSetChanged();
             }
         });
         RxBusManager.getInstance().tObservable(DeviceData,String.class).subscribe(new Consumer<String>() {
@@ -103,26 +118,53 @@ public class HomeActivity extends BaseActivity {
                 if (mBlueToothListView!=null){
                     view.removeView(mBlueToothListView);
                 }
-                BlueToothManager.getInstance().search(3000,3);
-                mBlueToothListView = new DeviceListView(HomeActivity.this);
-                mBlueToothListView.setListAdapter(new DeviceListAdapter(HomeActivity.this));
-                ConstraintLayout.LayoutParams container = new ConstraintLayout.LayoutParams(
-                        ConstraintLayout.LayoutParams.WRAP_CONTENT,
-                        ConstraintLayout.LayoutParams.WRAP_CONTENT
-                );
-                mBlueToothListView.onListItemClick = new DeviceListView.OnListItemClick() {
-                    @Override
-                    public void onListItemClick(AdapterView<?> l, View v, int position, long id) {
-                        SearchResult device = mBlueToothListView.getListAdapter().getDevice(position);
-                        mSelectedDevice = device;
-                        BlueToothManager.getInstance().connect(device,3,30000,3,20000);
-                    }
-                };
-                container.startToStart = blueToothSuperView.getId();
-                container.endToEnd = blueToothSuperView.getId();
-                container.topToBottom = blueToothSuperView.getId();
-                container.height = 300;
-                mBlueToothListView.setLayoutParams(container);
+                switch (type){
+                    case BLE:
+                        BlueToothManager.getInstance().search(3000,3);
+                        mBlueToothListView.setListAdapter(new DeviceListAdapter(HomeActivity.this));
+                        mBlueToothListView.setClassListAdapter(new ClassDeviceListAdapter(HomeActivity.this));
+                        ConstraintLayout.LayoutParams container = new ConstraintLayout.LayoutParams(
+                                ConstraintLayout.LayoutParams.WRAP_CONTENT,
+                                ConstraintLayout.LayoutParams.WRAP_CONTENT
+                        );
+                        mBlueToothListView.onListItemClick = new DeviceListView.OnListItemClick() {
+                            @Override
+                                public void onListItemClick(AdapterView<?> l, View v, int position, long id) {
+                                SearchResult device = mBlueToothListView.getListAdapter().getDevice(position);
+                                mSelectedDevice = device;
+                                BlueToothManager.getInstance().connect(device,3,30000,3,20000);
+                            }
+                        };
+                        container.startToStart = blueToothSuperView.getId();
+                        container.endToEnd = blueToothSuperView.getId();
+                        container.topToBottom = blueToothSuperView.getId();
+                        container.height = 300;
+                        mBlueToothListView.setLayoutParams(container);
+                    case CLASS:
+                        ClassBlueToothManager.getInstance().createClassBluetoothClient(HomeActivity.this);
+                        ClassBlueToothManager.getInstance().search();
+                        mBlueToothListView = new DeviceListView(HomeActivity.this);
+                        mBlueToothListView.setClassListAdapter(new ClassDeviceListAdapter(HomeActivity.this));
+                        ConstraintLayout.LayoutParams container2 = new ConstraintLayout.LayoutParams(
+                                ConstraintLayout.LayoutParams.WRAP_CONTENT,
+                                ConstraintLayout.LayoutParams.WRAP_CONTENT
+                        );
+                        mBlueToothListView.onListItemClick = new DeviceListView.OnListItemClick() {
+                            @Override
+                            public void onListItemClick(AdapterView<?> l, View v, int position, long id) {
+                                BluetoothDevice device = mBlueToothListView.getClassListAdapter().getDevice(position);
+                                mSelectedClassDevice = device;
+                                ClassBlueToothManager.getInstance().connect(device);
+                            }
+                        };
+                        container2.startToStart = blueToothSuperView.getId();
+                        container2.endToEnd = blueToothSuperView.getId();
+                        container2.topToBottom = blueToothSuperView.getId();
+                        container2.height = 300;
+                        mBlueToothListView.setLayoutParams(container2);
+                }
+
+
                 view.addView(mBlueToothListView);
             }
         });
