@@ -1,5 +1,7 @@
 package com.ccydsz.cloud;
 
+import android.content.Context;
+
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.DiskLogAdapter;
 import com.orhanobut.logger.FormatStrategy;
@@ -26,9 +28,11 @@ import java.util.Map;
  */
 
 public class Application extends android.app.Application{
+    private static Application context;
     @Override
     public void onCreate() {
         super.onCreate();
+        context = this;
 //        Realm.init(this);
 //        RealmConfiguration config = new RealmConfiguration.Builder().build();
 //        Realm.setDefaultConfiguration(config);
@@ -55,5 +59,11 @@ public class Application extends android.app.Application{
             }
         });
         Logger.addLogAdapter(new DiskLogAdapter());
+    }
+
+    /**
+     * 获取全局上下文*/
+    public static Application getApplication() {
+        return context;
     }
 }

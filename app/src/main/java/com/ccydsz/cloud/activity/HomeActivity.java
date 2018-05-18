@@ -22,6 +22,7 @@ import com.ccydsz.cloud.adapter.DeviceListAdapter;
 import com.ccydsz.cloud.base.BaseActivity;
 import com.ccydsz.cloud.manager.BlueToothManager;
 import com.ccydsz.cloud.manager.ClassBlueToothManager;
+import com.ccydsz.cloud.manager.LogManager;
 import com.ccydsz.cloud.manager.RxBusManager;
 import com.ccydsz.cloud.util.ZLUtil;
 import com.ccydsz.cloud.view.DeviceListView;
@@ -76,7 +77,8 @@ public class HomeActivity extends BaseActivity {
         RxBusManager.getInstance().tObservable(DeviceData,String.class).subscribe(new Consumer<String>() {
             @Override
             public void accept(String s) throws Exception {
-                Logger.i(String.format("蓝牙onNotify的数据: %s",s));
+//                Logger.i(String.format("蓝牙onNotify的数据: %s",s));
+//                LogManager.getInstance().writeLog(s,"obd");
             }
         });
 

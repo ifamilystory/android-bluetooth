@@ -1,5 +1,6 @@
 package com.ccydsz.cloud;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,4 +17,6 @@ public class MainActivity extends AppCompatActivity {
         BlueToothManager.getInstance().createBluetoothClient(this);
         startActivity(new Intent(this, HomeActivity.class));
     }
+
+
 }

@@ -47,6 +47,8 @@ public class ClassBlueToothManager {
     public BaseActivity mContext;
     public static String serverUUID = "FFE0";
     public static String characteristicUUID = "FFE1";
+    public static int formatDataLength = 15;
+    public static int dataBufferSize = 1024;
 
     private ClassBlueToothManager (){
 
@@ -213,7 +215,8 @@ public class ClassBlueToothManager {
         }
 
         public void run() {
-            byte[] buffer = new byte[15];  // buffer store for the stream
+            byte[] buffer = new byte[ClassBlueToothManager.dataBufferSize];  // buffer store for the stream
+            byte[] logBuffer = new byte[ClassBlueToothManager.formatDataLength];
             int bytes = 0; // bytes returned from read()
 
             // Keep listening to the InputStream until an exception occurs
@@ -226,10 +229,26 @@ public class ClassBlueToothManager {
                     if (totalCounter == Integer.MAX_VALUE) {
                         totalCounter = 0;
                     }
+//                    if (totalCounter%ClassBlueToothManager.formatDataLength == 0){
+//                        System.arraycopy (buffer,0,logBuffer,0,bytes);
+//                    }else {
+//                        int header = totalCounter%ClassBlueToothManager.formatDataLength;
+//                        if (header + bytes > ClassBlueToothManager.formatDataLength){
+//                            System.arraycopy (buffer,0,logBuffer,header-1,ClassBlueToothManager.formatDataLength-header);
+//                            LogManager.getInstance().writeLog(ZLUtil.bytesToHexString(logBuffer),"obdtotal");
+//                            System.arraycopy (buffer,ClassBlueToothManager.formatDataLength-header-1,logBuffer,0,header + bytes-ClassBlueToothManager.formatDataLength);
+//                        }else if (header + bytes == ClassBlueToothManager.formatDataLength){
+//                            LogManager.getInstance().writeLog(ZLUtil.bytesToHexString(logBuffer),"obdtotal");
+//                            System.arraycopy (buffer,0,logBuffer,0,bytes);
+//                        }else{
+//                            System.arraycopy (buffer,0,logBuffer,header-1,bytes);
+//                        }
+//
+//                    }
                     totalCounter += bytes;
                     System.arraycopy (buffer,0,real,0,bytes);
                     decodeData(real);
-                    Logger.i(String.format("总数量: %d",totalCounter));
+                    LogManager.getInstance().writeLog(String.valueOf(totalCounter/ClassBlueToothManager.formatDataLength),"obdtotalcount");
                 } catch (IOException e) {
                     break;
                 }
@@ -289,9 +308,8 @@ public class ClassBlueToothManager {
                     }
                     if (currentByteIndex == 14) {
                         if  ((check & 0x000000FF) == ZLUtil.byte2ToUnsignedShort(byteData)){
-                            validCounter += 15;
-                            Logger.i(String.format("蓝牙onNotify的数据: %s",dataString));
-                            Logger.i(String.format("有效数量: %d",validCounter));
+                            validCounter += 1;
+                            LogManager.getInstance().writeLog(String.valueOf(validCounter),"obdvalidcount");
                             RxBusManager.getInstance().send(RxBusManager.DeviceData, needDataString);
                         }else {
 
