@@ -7,11 +7,16 @@ import android.widget.ImageButton;
 
 import com.zhangling.bluetooth.custom.ZLColor;
 
+import java.text.SimpleDateFormat;
+
 /**
  * Created by ysec on 2018/3/19.
  */
 
 public class ZLUtil {
+
+    public static SimpleDateFormat HHmmssFormat = new SimpleDateFormat("HHmmss");
+
     public static String bytesToHexString(byte[] src){
         StringBuilder stringBuilder = new StringBuilder("");
         if (src == null || src.length <= 0) {

@@ -9,17 +9,23 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
 
+import com.zhangling.bluetooth.Application;
 import com.zhangling.bluetooth.base.BaseActivity;
+import com.zhangling.bluetooth.model.UI.OBDModel;
 import com.zhangling.bluetooth.util.ZLUtil;
 import com.inuker.bluetooth.library.BluetoothClient;
 import com.inuker.bluetooth.library.search.SearchResult;
 import com.orhanobut.logger.Logger;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -49,6 +55,27 @@ public class ClassBlueToothManager {
     public static String characteristicUUID = "FFE1";
     public static int formatDataLength = 15;
     public static int dataBufferSize = 1024;
+
+    static private String OBDFileName = "OBDUpload";
+    static private String angularSpeedFileName = "angularSpeedUpload";
+    static private String acceleratedSpeedFileName = "acceleratedSpeedUpload";
+    static private String gpsFileName = "GPSUpload";
+
+
+    private String OBDWritingPath = "";
+    private String angularSpeedWritingPath = "";
+    private String acceleratedSpeedWritingPath = "";
+    private String gpsWritingPath = "";
+
+    private long obdCounte = 0;
+    private long gyroCounter = 0;
+    private long altimeterCounter = 0;
+    private long accelerometerCounter = 0;
+    private long sensorCounter = 0;
+    private long gpsCounter = 0;
+
+    /// 单个文件中最大数量
+    static private int uploadFileMaxCount = 500;
 
     private ClassBlueToothManager (){
 
@@ -247,8 +274,9 @@ public class ClassBlueToothManager {
 //                    }
                     totalCounter += bytes;
                     System.arraycopy (buffer,0,real,0,bytes);
+                    Logger.i("%d",totalCounter/15);
                     decodeData(real);
-                    LogManager.getInstance().writeLog(String.valueOf(totalCounter/ClassBlueToothManager.formatDataLength),"obdtotalcount");
+//                    LogManager.getInstance().writeLog(String.valueOf(totalCounter/ClassBlueToothManager.formatDataLength),"obdtotalcount");
                 } catch (IOException e) {
                     break;
                 }
@@ -308,9 +336,21 @@ public class ClassBlueToothManager {
                     }
                     if (currentByteIndex == 14) {
                         if  ((check & 0x000000FF) == ZLUtil.byte2ToUnsignedShort(byteData)){
-                            validCounter += 1;
-                            LogManager.getInstance().writeLog(String.valueOf(validCounter),"obdvalidcount");
                             RxBusManager.getInstance().send(RxBusManager.DeviceData, needDataString);
+                            if (validCounter % ClassBlueToothManager.uploadFileMaxCount == 0){
+                                OBDWritingPath = ZLUtil.HHmmssFormat.format(new Date());
+                            }
+                            validCounter += 1;
+//                            LogManager.getInstance().writeLog(String.valueOf(validCounter),"obdvalidcount");
+                            Logger.i("%d",validCounter);
+                            OBDModel fileModel = new OBDModel();
+                            fileModel.setId(messageId);
+                            fileModel.setDate(System.currentTimeMillis());
+                            fileModel.setMsgType("Rx");
+                            fileModel.setData(needDataString.trim());
+                            fileModel.setCounts(0);
+                            String writeString = fileModel.getDate() + " " + fileModel.getMsgType() + " " + fileModel.getCounts() + " "  + "0x" + Integer.toHexString(fileModel.getId())  + " " + "s"  + " " + "8"  + " " + fileModel.getData();
+                            write(writeString,ClassBlueToothManager.OBDFileName,OBDWritingPath);
                         }else {
 
                         }
@@ -356,7 +396,54 @@ public class ClassBlueToothManager {
                 mmSocket.close();
             } catch (IOException e) { }
         }
+
+        public void createFile(String dir,String fileName){
+            fileName = addSuffix(fileName);
+            File file = new File(Application.getApplication().getFilesDir().getPath() + "/" + dir);
+            if (!file.exists()) {
+                boolean result; // 文件是否创建成功
+                result= file.mkdirs();
+            }
+            file = new File(file.getPath() + "/" + fileName);
+            boolean result; // 文件是否创建成功
+            if (!file.exists()){
+                try {
+                    result = file.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return;
+                }
+                if (!result) {
+                    return;
+                }
+            }
+        }
+
+        public void write(String data,String dir,String fileName) {
+            data = data + " \n";
+            FileOutputStream outputStream;
+            createFile(dir,fileName);
+            fileName = addSuffix(fileName);
+            try {
+                outputStream = new FileOutputStream(Application.getApplication().getFilesDir().getPath() + "/" + dir + "/" + fileName,true );
+                outputStream.write(data.getBytes());
+                outputStream.flush();
+                outputStream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        private String addSuffix(String fileName){
+            if (!fileName.endsWith(".log")){
+                fileName = fileName + ".log";
+            }
+            return fileName;
+        }
     }
+
+
+
 
 
 
