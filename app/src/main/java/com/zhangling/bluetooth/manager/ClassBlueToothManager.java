@@ -272,7 +272,7 @@ public class ClassBlueToothManager {
 //                    }
                     totalCounter += bytes;
                     System.arraycopy (buffer,0,real,0,bytes);
-                    Logger.i("%d",totalCounter/15);
+                    Logger.i("总的%d->%d",totalCounter,System.currentTimeMillis());
                     decodeData(real);
 //                    LogManager.getInstance().writeLog(String.valueOf(totalCounter/ClassBlueToothManager.formatDataLength),"obdtotalcount");
                 } catch (IOException e) {
@@ -340,7 +340,7 @@ public class ClassBlueToothManager {
                             }
                             validCounter += 1;
 //                            LogManager.getInstance().writeLog(String.valueOf(validCounter),"obdvalidcount");
-                            Logger.i("%d",validCounter);
+                            Logger.i("Check成功：%d->%d",validCounter,System.currentTimeMillis());
                             OBDModel fileModel = new OBDModel();
                             fileModel.setId(messageId);
                             fileModel.setDate(System.currentTimeMillis());

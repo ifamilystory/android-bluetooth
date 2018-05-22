@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/view"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:id="@+id/bluetooth_view"
+        android:layout_width="@dimen/zeroHeight"
+        android:layout_height="@dimen/navigationBarHeight_statueBarHeight"
+        android:layout_marginTop="@dimen/navigationBarHeight"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RelativeLayout
+            android:layout_width="@dimen/navigationBarHeight_statueBarHeight"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="@dimen/zeroHeight"
+            android:layout_marginBottom="@dimen/zeroHeight"
+            >
+            <ImageButton
+                android:id="@+id/bluetooth"
+                android:layout_width="@dimen/navigationBarHeight"
+                android:layout_height="@dimen/navigationBarHeight"
+                android:layout_marginTop="@dimen/zeroHeight"
+                android:layout_centerHorizontal="true"
+                android:src="@mipmap/bluetooth"
+                android:background="@color/colorClear"
+                />
+            <TextView
+                android:id="@+id/bluetooth_statue_tx"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/bluetooth"
+                android:textColor="@color/colorHalfBlack"
+                android:text="@string/__"
+                android:textAlignment="center"
+                />
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="@dimen/zeroHeight"
+        android:layout_height="@dimen/lineHeight"
+        android:background="@color/colorBlack"
+        android:layout_marginTop="@dimen/zeroHeight"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bluetooth_view">
+    </RelativeLayout>
+
+
+</android.support.constraint.ConstraintLayout>

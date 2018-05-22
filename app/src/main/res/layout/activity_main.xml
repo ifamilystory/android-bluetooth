@@ -6,6 +6,17 @@
     android:layout_height="match_parent"
     tools:context="com.zhangling.bluetooth.MainActivity">
 
+    <com.hjm.bottomtabbar.BottomTabBar
+        android:id="@+id/bottom_tab_bar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent">
+
+    </com.hjm.bottomtabbar.BottomTabBar>
+
 
 
 </android.support.constraint.ConstraintLayout>

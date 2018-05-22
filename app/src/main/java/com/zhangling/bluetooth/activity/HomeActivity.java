@@ -108,15 +108,15 @@ public class HomeActivity extends BaseActivity {
         }else {
 
         }
+//
+//        PackageManager pm = getPackageManager();
+//        mHomeInfo =pm.resolveActivity(new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME), 0);
+////工作内容
+//
+////工作内容
+//        go2Idle();
 
-        PackageManager pm = getPackageManager();
-        mHomeInfo =pm.resolveActivity(new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME), 0);
-//工作内容
-
-//工作内容
-        go2Idle();
-
-
+        startActivity(new Intent(this, LoginActivity.class));
 
     }
 
@@ -176,6 +176,8 @@ public class HomeActivity extends BaseActivity {
                                 BluetoothDevice device = mBlueToothListView.getClassListAdapter().getDevice(position);
                                 mSelectedClassDevice = device;
                                 ClassBlueToothManager.getInstance().connect(device);
+                                mBlueToothListView.setVisibility(View.INVISIBLE);
+
                             }
                         };
                         container2.startToStart = blueToothSuperView.getId();
@@ -207,24 +209,25 @@ public class HomeActivity extends BaseActivity {
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {//当返回按键被按下
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);//新建一个对话框
-            dialog.setMessage("确定要退出测试吗?");//设置提示信息
-            //设置确定按钮并监听
-            dialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-//                    finish();//结束当前Activity
-                    moveTaskToBack(true);
-                }
-            });
-            //设置取消按钮并监听
-            dialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    //这里什么也不用做
-                }
-            });
-            dialog.show();//最后不要忘记把对话框显示出来
+            moveTaskToBack(true);
+//            AlertDialog.Builder dialog = new AlertDialog.Builder(this);//新建一个对话框
+//            dialog.setMessage("确定要退出测试吗?");//设置提示信息
+//            //设置确定按钮并监听
+//            dialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+////                    finish();//结束当前Activity
+//                    moveTaskToBack(true);
+//                }
+//            });
+//            //设置取消按钮并监听
+//            dialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+//                    //这里什么也不用做
+//                }
+//            });
+//            dialog.show();//最后不要忘记把对话框显示出来
         }
         return false;
     }
