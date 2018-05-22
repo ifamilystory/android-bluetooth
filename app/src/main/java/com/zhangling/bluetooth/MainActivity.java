@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.zhangling.bluetooth.activity.HomeActivity;
+import com.zhangling.bluetooth.activity.LoginActivity;
 import com.zhangling.bluetooth.manager.BlueToothManager;
 
 public class MainActivity extends AppCompatActivity {
@@ -15,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         BlueToothManager.getInstance().createBluetoothClient(this);
-        startActivity(new Intent(this, HomeActivity.class));
+        startActivity(new Intent(this, LoginActivity.class));
     }
 
 

@@ -14,9 +14,7 @@ public class LogManager {
     public static  LogManager getInstance(){
         if(instance==null){
             synchronized(LogManager.class){
-                if(instance==null){
-                    instance=new LogManager ();
-                }
+                instance=new LogManager ();
             }
         }
         return instance;

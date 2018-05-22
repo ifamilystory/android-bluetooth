@@ -17,6 +17,7 @@ import com.orhanobut.logger.DiskLogAdapter;
 import com.orhanobut.logger.FormatStrategy;
 import com.orhanobut.logger.Logger;
 import com.orhanobut.logger.PrettyFormatStrategy;
+import com.zhangling.bluetooth.manager.UploadFileManager;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -37,6 +38,7 @@ public class Application extends android.app.Application{
 //        RealmConfiguration config = new RealmConfiguration.Builder().build();
 //        Realm.setDefaultConfiguration(config);
         configLoger();
+//        UploadFileManager.getInstance().config();
     }
 
     private void configLoger(){

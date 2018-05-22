@@ -15,7 +15,7 @@ import java.text.SimpleDateFormat;
 
 public class ZLUtil {
 
-    public static SimpleDateFormat HHmmssFormat = new SimpleDateFormat("HHmmss");
+    public static SimpleDateFormat HHmmssFormat = new SimpleDateFormat("yyyyMMddHHmmss");
 
     public static String bytesToHexString(byte[] src){
         StringBuilder stringBuilder = new StringBuilder("");

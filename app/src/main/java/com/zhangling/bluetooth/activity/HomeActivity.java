@@ -3,18 +3,28 @@ package com.zhangling.bluetooth.activity;
 import android.Manifest;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
+import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.zhangling.bluetooth.R;
 import com.zhangling.bluetooth.adapter.ClassDeviceListAdapter;
@@ -55,6 +65,8 @@ public class HomeActivity extends BaseActivity {
 
     static BlueToothManager.BlueToothType type = BlueToothManager.BlueToothType.CLASS;
 
+
+    ResolveInfo mHomeInfo;
     @BindView(R.id.view)
     public ConstraintLayout view;
     @Override
@@ -96,6 +108,13 @@ public class HomeActivity extends BaseActivity {
         }else {
 
         }
+
+        PackageManager pm = getPackageManager();
+        mHomeInfo =pm.resolveActivity(new Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME), 0);
+//工作内容
+
+//工作内容
+        go2Idle();
 
 
 
@@ -179,6 +198,61 @@ public class HomeActivity extends BaseActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == BlueToothManager.MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION) {
             BlueToothManager.getInstance().search(3000,3);
+        }
+    }
+
+
+
+
+
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {//当返回按键被按下
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);//新建一个对话框
+            dialog.setMessage("确定要退出测试吗?");//设置提示信息
+            //设置确定按钮并监听
+            dialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+//                    finish();//结束当前Activity
+                    moveTaskToBack(true);
+                }
+            });
+            //设置取消按钮并监听
+            dialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //这里什么也不用做
+                }
+            });
+            dialog.show();//最后不要忘记把对话框显示出来
+        }
+        return false;
+    }
+
+
+    private void go2Idle(){
+        ActivityInfo ai = mHomeInfo.activityInfo;
+        Intent startIntent= new Intent(Intent.ACTION_MAIN);
+        startIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+        startIntent.setComponent(new ComponentName(ai.packageName,
+                ai.name));
+        startActivitySafely(startIntent);
+    }
+
+    private void startActivitySafely(Intent intent) {
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        try {
+            startActivity(intent);
+        } catch(ActivityNotFoundException e) {
+            Toast.makeText(this, "work wrongly",
+                    Toast.LENGTH_SHORT).show();
+        } catch(SecurityException e) {
+            Toast.makeText(this, "notsecurity",Toast.LENGTH_SHORT).show();
+            Log.e(HomeActivity.class.getName(),"Launcher does not have the permission to launch "
+                            + intent
+                            + ".Make sure to create a MAIN intent-filter for the corresponding activity "
+                            + "oruse the exported attribute for this activity.",
+                    e);
         }
     }
 }

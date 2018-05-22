@@ -82,9 +82,7 @@ public class BlueToothManager {
     public static  BlueToothManager getInstance(){
         if(instance==null){
             synchronized(BlueToothManager.class){
-                if(instance==null){
-                    instance=new BlueToothManager ();
-                }
+                instance=new BlueToothManager ();
             }
         }
         return instance;

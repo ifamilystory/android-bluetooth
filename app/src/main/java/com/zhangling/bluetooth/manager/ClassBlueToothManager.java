@@ -56,10 +56,10 @@ public class ClassBlueToothManager {
     public static int formatDataLength = 15;
     public static int dataBufferSize = 1024;
 
-    static private String OBDFileName = "OBDUpload";
-    static private String angularSpeedFileName = "angularSpeedUpload";
-    static private String acceleratedSpeedFileName = "acceleratedSpeedUpload";
-    static private String gpsFileName = "GPSUpload";
+    static public String OBDFileName = "OBDUpload";
+    static public String angularSpeedFileName = "angularSpeedUpload";
+    static public String acceleratedSpeedFileName = "acceleratedSpeedUpload";
+    static public String gpsFileName = "GPSUpload";
 
 
     private String OBDWritingPath = "";
@@ -83,9 +83,7 @@ public class ClassBlueToothManager {
     public static  ClassBlueToothManager getInstance(){
         if(instance==null){
             synchronized(ClassBlueToothManager.class){
-                if(instance==null){
-                    instance=new ClassBlueToothManager ();
-                }
+                instance=new ClassBlueToothManager ();
             }
         }
         return instance;
@@ -435,8 +433,8 @@ public class ClassBlueToothManager {
         }
 
         private String addSuffix(String fileName){
-            if (!fileName.endsWith(".log")){
-                fileName = fileName + ".log";
+            if (!fileName.endsWith(".txt")){
+                fileName = fileName + ".txt";
             }
             return fileName;
         }
